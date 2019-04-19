@@ -12,6 +12,7 @@ use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\EventStore\Persistence\EventPersisterException;
 use Blixit\EventSourcing\EventStore\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\Replay\EventPlayer;
+use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use ReflectionException;
@@ -28,9 +29,13 @@ class EventStore implements EventStoreInterface
     /** @var string $aggregateClass */
     private $aggregateClass;
 
+    /** @var StreamStrategy $streamStrategy */
+    private $streamStrategy;
+
     public function __construct(
         string $aggregateClass,
-        EventPersisterInterface $eventPersister
+        EventPersisterInterface $eventPersister,
+        string $streamStrategyClass
     ) {
         if (empty($this->eventPlayer)) {
             $this->eventPlayer = EventPlayer::getInstance();
@@ -38,6 +43,15 @@ class EventStore implements EventStoreInterface
 
         $this->eventPersister = $eventPersister;
         $this->aggregateClass = $aggregateClass;
+        $this->streamStrategy = StreamStrategy::resolveStreamStrategy($streamStrategyClass);
+    }
+
+    /**
+     * @param mixed $aggregateId
+     */
+    public function getStreamNameForAggregateId($aggregateId = null) : StreamName
+    {
+        return $this->streamStrategy->computeName($this->aggregateClass, $aggregateId);
     }
 
     /**
@@ -48,12 +62,11 @@ class EventStore implements EventStoreInterface
     public function get($aggregateId) : ?AggregateRootInterface
     {
         // compute streamName based on stream strategy
-        $streamName = StreamName::fromString('mystream');
-
+        $streamName = $this->getStreamNameForAggregateId($aggregateId);
         // get events from store ...
-//        $events = $this->eventPersister->getByStream($streamName);
-        $events = $this->eventPersister->get($aggregateId);
+        $events = $this->eventPersister->getByStream($streamName);
 
+        // build stream
         $stream = new Stream($streamName, $events);
 
         // implements snapshot
@@ -66,6 +79,9 @@ class EventStore implements EventStoreInterface
      */
     public function store(AggregateRootInterface &$aggregateRoot) : void
     {
+        // compute streamName based on stream strategy
+        $streamName = $this->getStreamNameForAggregateId($aggregateRoot->getAggregateId());
+
         /** @var AggregateAccessor $aggAccessor */
         $aggAccessor = AggregateAccessor::getInstance();
         /** @var EventAccessor $evAccessor */
@@ -80,6 +96,8 @@ class EventStore implements EventStoreInterface
             // next sequence
             $nextSequence = $aggregateRoot->getSequence() + 1;
             $evAccessor->setSequence($event, $nextSequence);
+            $evAccessor->setStreamName($event, (string) $streamName);
+
             // save event
             try {
                 $committedEvent = clone $this->eventPersister->persist($event);

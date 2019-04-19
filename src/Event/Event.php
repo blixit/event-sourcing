@@ -20,6 +20,9 @@ class Event implements EventInterface
     /** @var Payload $payload */
     protected $payload;
 
+    /** @var string $streamName */
+    protected $streamName;
+
     /** @var mixed $aggregateId */
     protected $aggregateId;
 
@@ -47,12 +50,6 @@ class Event implements EventInterface
         $lsbClass = static::class;
         return new $lsbClass($aggregateId, Payload::fromArray($payload));
     }
-//
-//    protected static function occurring(string $aggregateId, Payload $payload) : EventInterface
-//    {
-//        $lsbClass = static::class;
-//        return new $lsbClass($aggregateId, $payload);
-//    }
 
     /**
      * @return mixed
@@ -70,6 +67,11 @@ class Event implements EventInterface
     public function getTimestamp() : int
     {
         return $this->timestamp;
+    }
+
+    public function getStreamName() : string
+    {
+        return $this->streamName;
     }
 
     /**

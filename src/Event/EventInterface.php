@@ -20,6 +20,8 @@ interface EventInterface //phpcs:ignore
 
     public function getTimestamp() : int;
 
+    public function getStreamName() : string;
+
     /**
      * @return mixed[]
      */

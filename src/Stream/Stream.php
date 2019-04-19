@@ -66,16 +66,14 @@ class Stream implements Countable
      */
     public function enqueue(EventInterface $event) : void
     {
-        // TODO: a mettre dans le builder
-//        $eventSequence = self::$eventAccessor->getSequence($event);
-//        if (! isset($this->lastEnqueuedSequenceNumber)) {
-//            $this->lastEnqueuedSequenceNumber = $eventSequence;
-//        }
-//
-//        // check sequence order integrity
-//        if ($eventSequence < $this->lastEnqueuedSequenceNumber) {
-//            throw new StreamNotOrderedFailure($this->streamName);
-//        }
+        if (! isset($this->lastEnqueuedSequenceNumber)) {
+            $this->lastEnqueuedSequenceNumber = $event->getSequence();
+        }
+
+        // check sequence order integrity
+        if ($event->getSequence() < $this->lastEnqueuedSequenceNumber) {
+            throw new StreamNotOrderedFailure($this->streamName);
+        }
 
         $this->queue->enqueue($event);
     }

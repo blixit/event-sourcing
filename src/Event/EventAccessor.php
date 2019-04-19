@@ -21,4 +21,9 @@ class EventAccessor extends Accessor
     {
         $this->writeProperty($event, 'sequence', $value);
     }
+
+    public function setStreamName(EventInterface &$event, string $value) : void
+    {
+        $this->writeProperty($event, 'streamName', $value);
+    }
 }
