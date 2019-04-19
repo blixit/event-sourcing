@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Aggregate\Replay;
+namespace Blixit\EventSourcing\Tests\Stream\Replay;
 
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
-use Blixit\EventSourcing\Aggregate\Replay\EventPlayer;
 use Blixit\EventSourcing\Event\Event;
+use Blixit\EventSourcing\Stream\Replay\EventPlayer;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use Blixit\EventSourcing\Stream\StreamNotOrderedFailure;

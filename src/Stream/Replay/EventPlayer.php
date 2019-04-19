@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Aggregate\Replay;
+namespace Blixit\EventSourcing\Stream\Replay;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use Blixit\EventSourcing\Aggregate\AggregateRoot;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Aggregate\Builder;
+namespace Blixit\EventSourcing\Stream\Builder;
 
 use Blixit\EventSourcing\Aggregate\AggregateRoot;
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Aggregate\Builder;
+namespace Blixit\EventSourcing\Tests\Stream\Builder;
 
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
-use Blixit\EventSourcing\Aggregate\Builder\AggregateBuilder;
+use Blixit\EventSourcing\Stream\Builder\AggregateBuilder;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use PHPUnit\Framework\TestCase;
