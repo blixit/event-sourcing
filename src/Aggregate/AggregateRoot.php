@@ -33,12 +33,13 @@ abstract class AggregateRoot implements
         return $this->aggregateId;
     }
 
+    public function getSequence() : int
+    {
+        return $this->versionSequence;
+    }
+
     public function record(EventInterface $event) : void
     {
-//        /** @var EventAccessor $eAccessor */
-//        $eAccessor = EventAccessor::getInstance();
-//        $eAccessor->setSequence($event, $this->versionSequence + 1);
-
         $this->recordedEvents[] = $event;
     }
 
@@ -48,5 +49,16 @@ abstract class AggregateRoot implements
     public function getRecordedEvents() : array
     {
         return $this->recordedEvents;
+    }
+
+    public function applyEvent(EventInterface $event) : void
+    {
+        $this->apply($event);
+
+        /** @var AggregateAccessor $aggregateAccessor */
+        $aggregateAccessor = AggregateAccessor::getInstance();
+        /** @var EventAccessor $eventAccessor */
+        $eventAccessor = EventAccessor::getInstance();
+        $aggregateAccessor->setVersionSequence($this, $event->getSequence());
     }
 }

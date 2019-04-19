@@ -13,5 +13,7 @@ interface AggregateRootInterface //phpcs:ignore
      */
     public function getAggregateId();
 
+    public function getSequence() : int;
+
     public function apply(EventInterface $event) : void;
 }

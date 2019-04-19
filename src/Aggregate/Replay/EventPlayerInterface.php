@@ -9,6 +9,8 @@ use Blixit\EventSourcing\Stream\Stream;
 
 interface EventPlayerInterface //phpcs:ignore
 {
+    public static function getInstance() : EventPlayerInterface;
+
     /**
      * @param mixed $aggregateId
      */

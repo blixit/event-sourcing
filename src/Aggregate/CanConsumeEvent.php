@@ -9,4 +9,6 @@ use Blixit\EventSourcing\Event\EventInterface;
 interface CanConsumeEvent
 {
     public function apply(EventInterface $event) : void;
+
+    public function applyEvent(EventInterface $event) : void;
 }

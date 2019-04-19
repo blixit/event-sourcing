@@ -12,6 +12,15 @@ interface EventInterface //phpcs:ignore
     public static function occur(string $id, array $payload) : EventInterface;
 
     /**
+     * @return mixed
+     */
+    public function getAggregateId();
+
+    public function getSequence() : int;
+
+    public function getTimestamp() : int;
+
+    /**
      * @return mixed[]
      */
     public function getPayload() : array;

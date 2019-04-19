@@ -14,8 +14,8 @@ use function time;
  */
 class Event implements EventInterface
 {
-    /** @var mixed $uuid */
-    protected $uuid;
+    /** @var mixed $id */
+    protected $id;
 
     /** @var Payload $payload */
     protected $payload;
@@ -32,9 +32,9 @@ class Event implements EventInterface
     /**
      * @param mixed[] $payload
      */
-    protected function __construct(string $id, Payload $payload)
+    protected function __construct(string $aggregateId, Payload $payload)
     {
-        $this->aggregateId = $id;
+        $this->aggregateId = $aggregateId;
         $this->payload     = $payload;
         $this->timestamp   = time();
     }
@@ -42,16 +42,34 @@ class Event implements EventInterface
     /**
      * @param mixed[] $payload
      */
-    public static function occur(string $id, array $payload) : EventInterface
+    public static function occur(string $aggregateId, array $payload) : EventInterface
     {
         $lsbClass = static::class;
-        return $lsbClass::occurring($id, Payload::fromArray($payload));
+        return new $lsbClass($aggregateId, Payload::fromArray($payload));
+    }
+//
+//    protected static function occurring(string $aggregateId, Payload $payload) : EventInterface
+//    {
+//        $lsbClass = static::class;
+//        return new $lsbClass($aggregateId, $payload);
+//    }
+
+    /**
+     * @return mixed
+     */
+    public function getAggregateId()
+    {
+        return $this->aggregateId;
     }
 
-    protected static function occurring(string $id, Payload $payload) : EventInterface
+    public function getSequence() : int
     {
-        $lsbClass = static::class;
-        return new $lsbClass($id, $payload);
+        return $this->sequence;
+    }
+
+    public function getTimestamp() : int
+    {
+        return $this->timestamp;
     }
 
     /**

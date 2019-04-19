@@ -11,12 +11,13 @@ class AggregateAccessorTest extends TestCase
 {
     public function testAggregateIdAccessor() : void
     {
-        $aggregate = new FakeAggregateRoot();
+        /** @var AggregateAccessor $aAccessor */
         $aAccessor = AggregateAccessor::getInstance();
+        $aggregate = new FakeAggregateRoot();
 
         $expectedAggregateId = 15;
         $aAccessor->setAggregateId($aggregate, $expectedAggregateId);
-        $aggregateId = $aAccessor->getAggregateId($aggregate);
+        $aggregateId = $aggregate->getAggregateId();
 
         $this->assertTrue($aggregateId === $expectedAggregateId);
 

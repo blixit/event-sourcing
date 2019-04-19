@@ -17,6 +17,16 @@ use function get_class;
 
 class EventPlayer implements EventPlayerInterface
 {
+    /** @var EventPlayerInterface $instance */
+    private static $instance;
+
+    public static function getInstance() : EventPlayerInterface
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new EventPlayer();
+        }
+        return self::$instance;
+    }
     /**
      * @param mixed $aggregateId
      *
@@ -44,7 +54,9 @@ class EventPlayer implements EventPlayerInterface
         ?int $initialPosition = 0,
         ?string $eventType = null
     ) : ?AggregateRootInterface {
-        $eventAccessor     = EventAccessor::getInstance();
+        /** @var EventAccessor $eventAccessor */
+        $eventAccessor = EventAccessor::getInstance();
+        /** @var AggregateAccessor $aggregateAccessor */
         $aggregateAccessor = AggregateAccessor::getInstance();
 
         $starterPosition = PositiveInteger::fromInt($initialPosition);
@@ -54,15 +66,14 @@ class EventPlayer implements EventPlayerInterface
 
         $eventsFound = 0;
         foreach ($stream->getIterator() as $i => $event) {
+            /** @var EventInterface $event */
             // ignores not relevant events
             if ($i < $starterPosition->getValue()) {
                 continue;
             }
-            /** @var EventInterface $event */
-            $eventAggregateId = $eventAccessor->getAggregateId($event);
 
             // ignores not relevant events
-            if ($eventAggregateId !== $aggregateId) {
+            if ($event->getAggregateId() !== $aggregateId) {
                 continue;
             }
 
@@ -78,10 +89,11 @@ class EventPlayer implements EventPlayerInterface
             // set default aggregateId with the first event that matches the search conditions
             // and the sequence is empty. ==> the aggregate is being built
             if (empty($aggregate->getAggregateId()) && $versionSequence === AggregateRoot::DEFAULT_SEQUENCE_POSITION) {
-                $aggregateAccessor->setAggregateId($aggregate, $eventAggregateId);
+                $aggregateAccessor->setAggregateId($aggregate, $event->getAggregateId());
             }
 
-            $aggregate->apply($event);
+            /** @var AggregateRoot $aggregate */
+            $aggregate->applyEvent($event);
         }
 
         return $eventsFound > 0 ? $aggregate : null;
