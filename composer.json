@@ -1,0 +1,23 @@
+{
+    "name": "blixit/event-sourcing",
+    "description": "",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Blixit",
+            "email": "alain.ngangoue@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "slevomat/coding-standard": "^5.0",
+        "doctrine/coding-standard": "^6.0",
+        "phpunit/phpunit": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Blixit\\EventSourcing\\": "src/",
+            "Blixit\\EventSourcing\\Tests\\": "tests/"
+        }
+    }
+}

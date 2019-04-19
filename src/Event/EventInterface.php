@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Blixit\EventSourcing\Event;
+
+interface EventInterface //phpcs:ignore
+{
+    /**
+     * @param mixed[] $payload
+     */
+    public static function occur(string $id, array $payload) : EventInterface;
+
+    /**
+     * @return mixed[]
+     */
+    public function getPayload() : array;
+}
