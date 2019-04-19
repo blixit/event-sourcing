@@ -6,8 +6,20 @@ namespace Blixit\EventSourcing\Utils;
 
 use Closure;
 
-class Accessor
+abstract class Accessor
 {
+    private function __construct()
+    {
+    }
+
+    public static function getInstance() : self
+    {
+        $lsbClass = static::class;
+        if (empty($lsbClass::$instance)) {
+            $lsbClass::$instance = new $lsbClass();
+        }
+        return $lsbClass::$instance;
+    }
     /**
      * @param mixed $object
      *

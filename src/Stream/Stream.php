@@ -35,7 +35,7 @@ class Stream implements Countable
     {
         if (empty(self::$eventAccessor)) {
             // only one item of the event accessor should be instantiated
-            self::$eventAccessor = new EventAccessor();
+            self::$eventAccessor = EventAccessor::getInstance();
         }
 
         $this->queue = new SplQueue();

@@ -11,35 +11,41 @@ use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Utils\Types\PositiveInteger;
+use ReflectionClass;
+use ReflectionException;
 use function get_class;
 
 class EventPlayer implements EventPlayerInterface
 {
     /**
      * @param mixed $aggregateId
+     *
+     * @throws ReflectionException
      */
     public function replay(
         Stream $stream,
+        string $aggregateClass,
         $aggregateId,
         ?int $initialPosition = 0,
         ?string $eventType = null
     ) : ?AggregateRootInterface {
-        $aggregate = AggregateRoot::getInstance();
-        return $this->replayFromAggregate($aggregate, $stream, $aggregateId, $initialPosition, $eventType);
+        /** @var AggregateRootInterface $aggregate */
+        $aggregate = (new ReflectionClass($aggregateClass))->newInstance();
+        return $this->replayFromAggregate($stream, $aggregate, $aggregateId, $initialPosition, $eventType);
     }
 
     /**
      * @param mixed $aggregateId
      */
     public function replayFromAggregate(
-        AggregateRootInterface $aggregate,
         Stream $stream,
+        AggregateRootInterface $aggregate,
         $aggregateId,
         ?int $initialPosition = 0,
         ?string $eventType = null
     ) : ?AggregateRootInterface {
-        $eventAccessor     = new EventAccessor();
-        $aggregateAccessor = new AggregateAccessor();
+        $eventAccessor     = EventAccessor::getInstance();
+        $aggregateAccessor = AggregateAccessor::getInstance();
 
         $starterPosition = PositiveInteger::fromInt($initialPosition);
 

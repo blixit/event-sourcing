@@ -14,6 +14,7 @@ interface EventPlayerInterface //phpcs:ignore
      */
     public function replay(
         Stream $stream,
+        string $aggregateClass,
         $aggregateId,
         ?int $initialPosition,
         ?string $eventType
@@ -23,8 +24,8 @@ interface EventPlayerInterface //phpcs:ignore
      * @param mixed $aggregateId
      */
     public function replayFromAggregate(
-        AggregateRootInterface $aggregate,
         Stream $stream,
+        AggregateRootInterface $aggregate,
         $aggregateId,
         ?int $initialPosition = 0,
         ?string $eventType = null

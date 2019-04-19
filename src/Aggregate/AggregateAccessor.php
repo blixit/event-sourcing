@@ -8,6 +8,9 @@ use Blixit\EventSourcing\Utils\Accessor;
 
 class AggregateAccessor extends Accessor
 {
+    /** @var AggregateAccessor $instance */
+    protected static $instance;
+
     /**
      * @param mixed $value
      */

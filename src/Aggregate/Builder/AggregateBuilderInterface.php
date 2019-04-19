@@ -12,5 +12,5 @@ interface AggregateBuilderInterface //phpcs:ignore
     /**
      * @param mixed $aggregateId
      */
-    public function build(Stream $stream, $aggregateId, string $type) : AggregateRootInterface;
+    public function build(Stream $stream, $aggregateId, string $type) : ?AggregateRootInterface;
 }

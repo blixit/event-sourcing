@@ -10,14 +10,17 @@ use Blixit\EventSourcing\Event\Event;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use Blixit\EventSourcing\Stream\StreamNotOrderedFailure;
+use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
 use Blixit\EventSourcing\Tests\Event\FakeEvent;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use function microtime;
 
 class EventPlayerTest extends TestCase
 {
     /**
      * @throws StreamNotOrderedFailure
+     * @throws ReflectionException
      */
     public function testPlayer() : void
     {
@@ -29,17 +32,18 @@ class EventPlayerTest extends TestCase
         $stream->enqueue(Event::occur('12', []));
 
         // there is 0 event of this aggregate starting from the position 2
-        $aggregate = $player->replay($stream, '123', 2);
+        $aggregate = $player->replay($stream, FakeAggregateRoot::class, '123', 2);
         $this->assertNull($aggregate);
 
         // there is one event of this aggregate starting from the position 0
-        $aggregate = $player->replay($stream, '123', 0);
+        $aggregate = $player->replay($stream, FakeAggregateRoot::class, '123', 0);
         $this->assertInstanceOf(AggregateRootInterface::class, $aggregate);
         $this->assertSame($aggregate->getAggregateId(), '123');
     }
 
     /**
      * @throws StreamNotOrderedFailure
+     * @throws ReflectionException
      */
     public function testTypeHandling() : void
     {
@@ -50,15 +54,19 @@ class EventPlayerTest extends TestCase
         $stream->enqueue(Event::occur('123', []));
 
         // there is 0 event of this aggregate and this type (FakeEvent) starting from the position 1
-        $aggregate = $player->replay($stream, '123', 1, FakeEvent::class);
+        $aggregate = $player->replay($stream, FakeAggregateRoot::class, '123', 1, FakeEvent::class);
         $this->assertNull($aggregate);
 
         // there is one event of this aggregate and this type (FakeEvent) starting from the position 0
-        $aggregate = $player->replay($stream, '123', 0, FakeEvent::class);
+        $aggregate = $player->replay($stream, FakeAggregateRoot::class, '123', 0, FakeEvent::class);
         $this->assertInstanceOf(AggregateRootInterface::class, $aggregate);
         $this->assertSame($aggregate->getAggregateId(), '123');
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws StreamNotOrderedFailure
+     */
     public function testPerformances() : void
     {
         $player = new EventPlayer();
@@ -73,7 +81,7 @@ class EventPlayerTest extends TestCase
         $this->assertLessThan(0.5, $t, $t . ' should be under 0.5s');
 
         $t = microtime(true);
-        $player->replay($stream, '123', 0, FakeEvent::class);
+        $player->replay($stream, FakeAggregateRoot::class, '123', 0, FakeEvent::class);
         $tZero = microtime(true) - $t;
         $this->assertTrue($tZero < .5, $tZero . ' not < 0.5s ');
     }

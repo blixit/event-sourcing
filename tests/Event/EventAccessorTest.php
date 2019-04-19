@@ -17,7 +17,7 @@ class EventAccessorTest extends TestCase
     {
         $e = Event::occur('', $expectedPayload = ['e' => 15]);
 
-        $eAccessor = new EventAccessor();
+        $eAccessor = EventAccessor::getInstance();
 
         $payload = $eAccessor->getPayload($e);
 
@@ -30,7 +30,7 @@ class EventAccessorTest extends TestCase
     {
         $e = Event::occur($expectedAggregateId = '', []);
 
-        $eAccessor = new EventAccessor();
+        $eAccessor = EventAccessor::getInstance();
 
         $aggregateId = $eAccessor->getAggregateId($e);
 
@@ -43,7 +43,7 @@ class EventAccessorTest extends TestCase
     {
         $e = Event::occur($expectedAggregateId = '', []);
 
-        $eAccessor = new EventAccessor();
+        $eAccessor = EventAccessor::getInstance();
 
         $sequence = $eAccessor->getSequence($e);
 

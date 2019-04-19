@@ -6,12 +6,7 @@ namespace Blixit\EventSourcing\Aggregate;
 
 use Blixit\EventSourcing\Event\EventInterface;
 
-interface AggregateRootInterface //phpcs:ignore
+interface CanConsumeEvent
 {
-    /**
-     * @return mixed
-     */
-    public function getAggregateId();
-
     public function apply(EventInterface $event) : void;
 }

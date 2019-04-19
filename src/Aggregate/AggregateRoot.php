@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Aggregate;
 
+use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
 
-class AggregateRoot implements AggregateRootInterface
+abstract class AggregateRoot implements
+    AggregateRootInterface,
+    CanConsumeEvent,
+    CanProduceEvent
 {
-    public const DEFAULT_SEQUENCE_POSITION = 1;
+    public const DEFAULT_SEQUENCE_POSITION = 0;
 
     /** @var mixed $aggregateId */
-    private $aggregateId;
+    protected $aggregateId;
 
     /** @var int $versionSequence */
-    private $versionSequence = self::DEFAULT_SEQUENCE_POSITION;
+    protected $versionSequence = self::DEFAULT_SEQUENCE_POSITION; // phpcs:ignore
 
-    public static function getInstance() : AggregateRootInterface
-    {
-        return new static();
-    }
+    /** @var EventInterface[] $recordedEvents */
+    protected $recordedEvents = [];
 
+    /** @var EventAccessor $eventAccessor */
+    protected $eventAccessor;
     /**
      * @return mixed
      */
@@ -29,7 +33,20 @@ class AggregateRoot implements AggregateRootInterface
         return $this->aggregateId;
     }
 
-    public function apply(EventInterface $event) : void
+    public function record(EventInterface $event) : void
     {
+//        /** @var EventAccessor $eAccessor */
+//        $eAccessor = EventAccessor::getInstance();
+//        $eAccessor->setSequence($event, $this->versionSequence + 1);
+
+        $this->recordedEvents[] = $event;
+    }
+
+    /**
+     * @return EventInterface[]
+     */
+    public function getRecordedEvents() : array
+    {
+        return $this->recordedEvents;
     }
 }

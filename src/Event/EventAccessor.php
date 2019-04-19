@@ -9,6 +9,9 @@ use Blixit\EventSourcing\Utils\Accessor;
 
 class EventAccessor extends Accessor
 {
+    /** @var EventAccessor $instance */
+    protected static $instance;
+
     public function getPayload(EventInterface $event) : Payload
     {
         return $this->readProperty($event, 'payload');
@@ -28,5 +31,10 @@ class EventAccessor extends Accessor
     public function getSequence(EventInterface $event)
     {
         return $this->readProperty($event, 'sequence');
+    }
+
+    public function setSequence(EventInterface $event, int $value) : void
+    {
+        $this->writeProperty($event, 'sequence', $value);
     }
 }
