@@ -11,9 +11,14 @@ class OneStreamPerAggregateStrategy extends StreamStrategy
 {
     /**
      * @param mixed $aggregateId
+     *
+     * @throws NamingStrategyException
      */
     public function computeName(string $aggregateClass, $aggregateId = null) : StreamName
     {
+        if (empty($aggregateId)) {
+            throw new NamingStrategyException('OneStreamPerAggregateStrategy requires not blank aggregate id');
+        }
         return StreamName::fromString(sprintf(
             '%s.%s',
             $aggregateClass,

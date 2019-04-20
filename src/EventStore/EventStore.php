@@ -16,6 +16,7 @@ use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use ReflectionException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 class EventStore implements EventStoreInterface
@@ -32,10 +33,17 @@ class EventStore implements EventStoreInterface
     /** @var StreamStrategy $streamStrategy */
     private $streamStrategy;
 
+    /** @var AggregateAccessor $aggregateAccessor */
+    private $aggregateAccessor;
+
+    /** @var EventAccessor $eventAccessor */
+    private $eventAccessor;
+
     public function __construct(
         string $aggregateClass,
         EventPersisterInterface $eventPersister,
-        string $streamStrategyClass
+        string $streamStrategyClass//,
+//        MessageBusInterface $messageBus
     ) {
         if (empty($this->eventPlayer)) {
             $this->eventPlayer = EventPlayer::getInstance();
@@ -44,6 +52,9 @@ class EventStore implements EventStoreInterface
         $this->eventPersister = $eventPersister;
         $this->aggregateClass = $aggregateClass;
         $this->streamStrategy = StreamStrategy::resolveStreamStrategy($streamStrategyClass);
+
+        $this->aggregateAccessor = AggregateAccessor::getInstance();
+        $this->eventAccessor     = EventAccessor::getInstance();
     }
 
     /**
@@ -79,13 +90,7 @@ class EventStore implements EventStoreInterface
      */
     public function store(AggregateRootInterface &$aggregateRoot) : void
     {
-        // compute streamName based on stream strategy
-        $streamName = $this->getStreamNameForAggregateId($aggregateRoot->getAggregateId());
-
-        /** @var AggregateAccessor $aggAccessor */
-        $aggAccessor = AggregateAccessor::getInstance();
-        /** @var EventAccessor $evAccessor */
-        $evAccessor = EventAccessor::getInstance();
+        $streamName = null;
 
         /** @var AggregateRoot $aggregateRoot */
         foreach ($aggregateRoot->getRecordedEvents() as $event) {
@@ -93,10 +98,16 @@ class EventStore implements EventStoreInterface
             if ($event->getSequence() > AggregateRoot::DEFAULT_SEQUENCE_POSITION) {
                 throw new EventReplicationAttempted($event);
             }
+            if (empty($streamName)) {
+                // compute streamName based on stream strategy
+                $streamName = $this->getStreamNameForAggregateId($event->getAggregateId());
+            }
+            // set stream name for event
+            $this->eventAccessor->setStreamName($event, (string) $streamName);
+
             // next sequence
             $nextSequence = $aggregateRoot->getSequence() + 1;
-            $evAccessor->setSequence($event, $nextSequence);
-            $evAccessor->setStreamName($event, (string) $streamName);
+            $this->eventAccessor->setSequence($event, $nextSequence);
 
             // save event
             try {
@@ -105,9 +116,9 @@ class EventStore implements EventStoreInterface
                 throw new EventPersisterException($exception->getMessage());
             }
             // remove from recorded events
-            $aggAccessor->shiftEvent($aggregateRoot);
+            $this->aggregateAccessor->shiftEvent($aggregateRoot);
             // if persistence works, then increment aggregate sequence
-            $aggAccessor->setVersionSequence($aggregateRoot, $nextSequence);
+            $this->aggregateAccessor->setVersionSequence($aggregateRoot, $nextSequence);
             // dispatch event
         }
     }

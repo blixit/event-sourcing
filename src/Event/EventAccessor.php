@@ -17,6 +17,14 @@ class EventAccessor extends Accessor
         return $this->readProperty($event, 'payload');
     }
 
+    /**
+     * @param mixed $value
+     */
+    public function setId(EventInterface &$event, $value) : void
+    {
+        $this->writeProperty($event, 'id', $value);
+    }
+
     public function setSequence(EventInterface &$event, int $value) : void
     {
         $this->writeProperty($event, 'sequence', $value);
