@@ -4,6 +4,7 @@
     "type": "library",
     "version": "0.0.1",
     "minimum-stability": "stable",
+    "license": "MIT",
     "authors": [
         {
             "name": "Blixit",
