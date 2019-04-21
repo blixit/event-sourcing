@@ -21,11 +21,6 @@ class AggregateAccessor extends Accessor
         $this->writeProperty($aggregateRoot, 'aggregateId', $value);
     }
 
-    public function getVersionSequence(AggregateRootInterface $aggregateRoot) : int
-    {
-        return $this->readProperty($aggregateRoot, 'versionSequence');
-    }
-
     public function setVersionSequence(AggregateRootInterface &$aggregateRoot, int $value) : void
     {
         $this->writeProperty($aggregateRoot, 'versionSequence', $value);

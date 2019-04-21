@@ -10,5 +10,9 @@ before_install:
 script:
   - ./vendor/bin/phpcs src
   - ./vendor/bin/phpmd src html phpmd.xml > reports/phpmd.html
-  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpunit --coverage-clover ./reports/clover.xml
   - bash <(curl -s https://codecov.io/bash)
+
+cache:
+  directories:
+    - $HOME/.composer/cache
