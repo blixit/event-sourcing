@@ -11,3 +11,4 @@ script:
   - ./vendor/bin/phpcs src
   - ./vendor/bin/phpmd src html phpmd.xml > reports/phpmd.html
   - ./vendor/bin/phpunit
+  - bash <(curl -s https://codecov.io/bash)
