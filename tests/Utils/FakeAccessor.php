@@ -15,4 +15,14 @@ class FakeAccessor extends Accessor
     {
         return $this->readProperty($object, 'value');
     }
+
+    /**
+     * @param mixed $object
+     *
+     * @return mixed
+     */
+    public function getConfiguration($object)
+    {
+        return $this->readProperty($object, 'configuration');
+    }
 }

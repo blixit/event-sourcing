@@ -11,6 +11,7 @@ use Blixit\EventSourcing\Store\SnapshotStore\SnapshotStore;
 use Blixit\EventSourcing\Stream\Strategy\UniqueStreamStrategy;
 use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
 use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcing\Tests\Utils\FakeAccessor;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +20,29 @@ class SnapshotStoreTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testToSnapshot() : void
+    public function testConfiguration() : void
+    {
+        $snapshotStore = new SnapshotStore(
+            FakeAggregateRoot::class,
+            new InMemoryEventPersister(),
+            UniqueStreamStrategy::class,
+            new InMemorySnapshotPersister(),
+            null,
+            null
+        );
+
+        /** @var FakeAccessor $accessor */
+        $accessor = FakeAccessor::getInstance();
+
+        /** @var SnapshotConfiguration $configuration */
+        $configuration = $accessor->getConfiguration($snapshotStore);
+        $this->assertSame($configuration->getSteps(), SnapshotStore::STEP);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSnapshoting() : void
     {
         $aggregate = new FakeAggregateRoot('123');
 
