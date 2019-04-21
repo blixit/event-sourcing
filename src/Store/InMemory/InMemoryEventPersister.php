@@ -15,18 +15,6 @@ class InMemoryEventPersister implements EventPersisterInterface
     private $events = [];
 
     /**
-     * @param mixed $aggregateId
-     *
-     * @return EventInterface[]
-     */
-    public function get($aggregateId) : array
-    {
-        return array_filter($this->events, static function (EventInterface $event) use ($aggregateId) {
-            return $event->getAggregateId() === $aggregateId;
-        });
-    }
-
-    /**
      * @return EventInterface[]
      */
     public function getByStream(StreamName $streamName, ?int $fromSequence = 0) : array
@@ -37,14 +25,6 @@ class InMemoryEventPersister implements EventPersisterInterface
         ) {
             return $event->getStreamName() === (string) $streamName && $event->getSequence() > $fromSequence;
         });
-    }
-
-    /**
-     * @return EventInterface[]
-     */
-    public function getByEvent(string $eventClassname) : array
-    {
-        return [];
     }
 
     public function persist(EventInterface $event) : EventInterface

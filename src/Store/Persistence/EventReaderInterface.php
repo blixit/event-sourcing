@@ -9,20 +9,20 @@ use Blixit\EventSourcing\Stream\StreamName;
 
 interface EventReaderInterface //phpcs:ignore
 {
-    /**
-     * @param mixed $aggregateId
-     *
-     * @return EventInterface[]
-     */
-    public function get($aggregateId) : array;
+//    /**
+//     * @param mixed $aggregateId
+//     *
+//     * @return EventInterface[]
+//     */
+//    public function get($aggregateId) : array;
 
     /**
      * @return EventInterface[]
      */
     public function getByStream(StreamName $streamName, ?int $fromSequence = 0) : array;
 
-    /**
-     * @return EventInterface[]
-     */
-    public function getByEvent(string $eventClassname) : array;
+//    /**
+//     * @return EventInterface[]
+//     */
+//    public function getByEvent(string $eventClassname) : array;
 }
