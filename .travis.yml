@@ -8,6 +8,7 @@ before_install:
   - composer install
 
 script:
+  - mkdir reports
   - ./vendor/bin/phpcs src
   - ./vendor/bin/phpmd src html phpmd.xml > reports/phpmd.html
   - ./vendor/bin/phpunit --coverage-clover ./reports/clover.xml
