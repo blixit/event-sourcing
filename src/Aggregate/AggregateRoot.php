@@ -54,11 +54,11 @@ abstract class AggregateRoot implements
     public function applyEvent(EventInterface $event) : void
     {
         $this->apply($event);
-
-        /** @var AggregateAccessor $aggregateAccessor */
-        $aggregateAccessor = AggregateAccessor::getInstance();
-        /** @var EventAccessor $eventAccessor */
-        $eventAccessor = EventAccessor::getInstance();
-        $aggregateAccessor->setVersionSequence($this, $event->getSequence());
+//
+//        /** @var AggregateAccessor $aggregateAccessor */
+//        $aggregateAccessor = AggregateAccessor::getInstance();
+//        /** @var EventAccessor $eventAccessor */
+//        $eventAccessor = EventAccessor::getInstance();
+//        $aggregateAccessor->setVersionSequence($this, $event->getSequence());
     }
 }

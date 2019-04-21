@@ -6,8 +6,8 @@ namespace Blixit\EventSourcing\Tests\EventStore;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use Blixit\EventSourcing\Event\EventAccessor;
-use Blixit\EventSourcing\EventStore\EventStore;
-use Blixit\EventSourcing\EventStore\Persistence\EventPersisterException;
+use Blixit\EventSourcing\Store\EventStore;
+use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
 use Blixit\EventSourcing\Stream\Strategy\SingleAggregateStreamStrategy;
 use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
@@ -120,7 +120,7 @@ class EventStoreTest extends TestCase
 //        $eventPersister->method('store')
 //            ->willReturnReference($aggregate);
 //
-//        $eventStore = new EventStore(FakeAggregateRoot::class, $eventPersister);
+//        $eventStore = new Store(FakeAggregateRoot::class, $eventPersister);
 //        $aggregate  = $eventStore->get('123');
 //        $this->assertNotEmpty($aggregate);
 //

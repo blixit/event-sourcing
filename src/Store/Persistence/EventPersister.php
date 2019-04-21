@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\EventStore\Persistence;
+namespace Blixit\EventSourcing\Store\Persistence;
 
 use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Stream\StreamName;
@@ -27,7 +27,7 @@ class EventPersister implements EventPersisterInterface
     /**
      * @return EventInterface[]
      */
-    public function getByStream(StreamName $streamName) : array
+    public function getByStream(StreamName $streamName, ?int $fromSequence = 0) : array
     {
         return [];
     }

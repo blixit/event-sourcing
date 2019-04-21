@@ -18,9 +18,11 @@ interface EventInterface //phpcs:ignore
 
     public function getSequence() : int;
 
+    public function getAggregateClass() : ?string;
+
     public function getTimestamp() : int;
 
-    public function getStreamName() : string;
+    public function getStreamName() : ?string;
 
     /**
      * @return mixed[]

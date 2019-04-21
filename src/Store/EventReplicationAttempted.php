@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\EventStore;
+namespace Blixit\EventSourcing\Store;
 
 use Blixit\EventSourcing\Event\EventInterface;
 use LogicException;

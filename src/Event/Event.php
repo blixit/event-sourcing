@@ -17,14 +17,17 @@ class Event implements EventInterface
     /** @var mixed $id */
     protected $id;
 
-    /** @var Payload $payload */
-    protected $payload;
+    /** @var mixed[] $payload */
+    protected $payload = [];
 
     /** @var string $streamName */
     protected $streamName;
 
     /** @var mixed $aggregateId */
     protected $aggregateId;
+
+    /** @var mixed $aggregateClass */
+    protected $aggregateClass;
 
     /** @var int $timestamp */
     protected $timestamp;
@@ -35,7 +38,7 @@ class Event implements EventInterface
     /**
      * @param mixed[] $payload
      */
-    protected function __construct(string $aggregateId, Payload $payload)
+    protected function __construct(string $aggregateId, array $payload)
     {
         $this->aggregateId = $aggregateId;
         $this->payload     = $payload;
@@ -48,7 +51,7 @@ class Event implements EventInterface
     public static function occur(string $aggregateId, array $payload) : EventInterface
     {
         $lsbClass = static::class;
-        return new $lsbClass($aggregateId, Payload::fromArray($payload));
+        return new $lsbClass($aggregateId, $payload);
     }
 
     /**
@@ -64,12 +67,17 @@ class Event implements EventInterface
         return $this->sequence;
     }
 
+    public function getAggregateClass() : ?string
+    {
+        return $this->aggregateClass;
+    }
+
     public function getTimestamp() : int
     {
         return $this->timestamp;
     }
 
-    public function getStreamName() : string
+    public function getStreamName() : ?string
     {
         return $this->streamName;
     }
@@ -79,6 +87,6 @@ class Event implements EventInterface
      */
     public function getPayload() : array
     {
-        return $this->payload->getArrayCopy();
+        return $this->payload;
     }
 }

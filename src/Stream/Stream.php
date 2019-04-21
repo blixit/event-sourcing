@@ -31,8 +31,11 @@ class Stream implements Countable
     /**
      * @param EventInterface[] $events
      */
-    public function __construct(StreamName $streamName, ?array $events = [])
-    {
+    public function __construct(
+        StreamName $streamName,
+        ?array $events = [],
+        ?callable $beforeEnqueue = null
+    ) {
         if (empty(self::$eventAccessor)) {
             // only one item of the event accessor should be instantiated
             self::$eventAccessor = EventAccessor::getInstance();
@@ -40,7 +43,13 @@ class Stream implements Countable
 
         $this->queue = new SplQueue();
 
+        if (empty($beforeEnqueue)) {
+            $beforeEnqueue = static function (EventInterface $event) : void {}; // phpcs:ignore
+        }
+
         foreach ($events as $event) {
+            $beforeEnqueue($event);
+            self::$eventAccessor->setStreamName($event, (string) $streamName);
             $this->enqueue($event);
         }
 
@@ -56,6 +65,7 @@ class Stream implements Countable
     {
         $this->streamName = $streamName;
     }
+
     public function dequeue() : EventInterface
     {
         return $this->queue->dequeue();

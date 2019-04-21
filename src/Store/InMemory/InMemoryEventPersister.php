@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\EventStore\InMemory;
+namespace Blixit\EventSourcing\Store\InMemory;
 
 use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
-use Blixit\EventSourcing\EventStore\Persistence\EventPersisterInterface;
+use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 use function array_filter;
 use function uniqid;
@@ -31,10 +31,13 @@ class InMemoryEventPersister implements EventPersisterInterface
     /**
      * @return EventInterface[]
      */
-    public function getByStream(StreamName $streamName) : array
+    public function getByStream(StreamName $streamName, ?int $fromSequence = 0) : array
     {
-        return array_filter($this->events, static function (EventInterface $event) use ($streamName) {
-            return $event->getStreamName() === (string) $streamName;
+        return array_filter($this->events, static function (EventInterface $event) use (
+            $streamName,
+            $fromSequence
+        ) {
+            return $event->getStreamName() === (string) $streamName && $event->getSequence() >= $fromSequence;
         });
     }
 

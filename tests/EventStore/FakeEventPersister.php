@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Blixit\EventSourcing\Tests\EventStore;
 
 use Blixit\EventSourcing\Event\EventInterface;
-use Blixit\EventSourcing\EventStore\Persistence\EventPersisterInterface;
+use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 
 class FakeEventPersister implements EventPersisterInterface
@@ -28,7 +28,7 @@ class FakeEventPersister implements EventPersisterInterface
     /**
      * @return EventInterface[]
      */
-    public function getByStream(StreamName $streamName) : array
+    public function getByStream(StreamName $streamName, ?int $fromSequence = 0) : array
     {
         return [];
     }

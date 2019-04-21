@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\EventStore\Persistence;
+namespace Blixit\EventSourcing\Store\Persistence;
 
 use Exception;
 
