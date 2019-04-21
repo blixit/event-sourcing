@@ -9,7 +9,7 @@ interface EventInterface //phpcs:ignore
     /**
      * @param mixed[] $payload
      */
-    public static function occur(string $id, array $payload) : EventInterface;
+    public static function occur(string $aggregateId, array $payload) : EventInterface;
 
     /**
      * @return mixed

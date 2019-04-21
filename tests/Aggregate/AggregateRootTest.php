@@ -11,7 +11,7 @@ class AggregateRootTest extends TestCase
 {
     public function testAggregateRoot() : void
     {
-        $fake = new FakeAggregateRoot();
+        $fake = new FakeAggregateRoot('1');
         $fake->record(FakeEvent::occur('1', []));
 
         $events = $fake->getRecordedEvents();

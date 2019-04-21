@@ -6,10 +6,7 @@ namespace Blixit\EventSourcing\Store\SnapshotStore;
 
 interface SnapshotPersisterInterface //phpcs:ignore
 {
-    public function snapshot(SnapshotInterface $aggregateRoot) : void;
+    public function snapshot(SnapshotInterface $snapshot) : void;
 
-    /**
-     * @param mixed $aggregateId
-     */
-    public function get($aggregateId) : ?SnapshotInterface;
+    public function get(string $streamName) : ?SnapshotInterface;
 }

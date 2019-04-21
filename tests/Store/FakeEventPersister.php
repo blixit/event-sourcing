@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\EventStore;
+namespace Blixit\EventSourcing\Tests\Store;
 
 use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;

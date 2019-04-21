@@ -7,10 +7,7 @@ namespace Blixit\EventSourcing\Aggregate;
 use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
 
-abstract class AggregateRoot implements
-    AggregateRootInterface,
-    CanConsumeEvent,
-    CanProduceEvent
+abstract class AggregateRoot implements AggregateRootInterface
 {
     public const DEFAULT_SEQUENCE_POSITION = 0;
 
@@ -25,6 +22,15 @@ abstract class AggregateRoot implements
 
     /** @var EventAccessor $eventAccessor */
     protected $eventAccessor;
+
+    /**
+     * @param mixed $aggregateId
+     */
+    public function setAggregateId($aggregateId) : void
+    {
+        $this->aggregateId = $aggregateId;
+    }
+
     /**
      * @return mixed
      */
@@ -51,14 +57,7 @@ abstract class AggregateRoot implements
         return $this->recordedEvents;
     }
 
-    public function applyEvent(EventInterface $event) : void
+    public function apply(EventInterface $event) : void
     {
-        $this->apply($event);
-//
-//        /** @var AggregateAccessor $aggregateAccessor */
-//        $aggregateAccessor = AggregateAccessor::getInstance();
-//        /** @var EventAccessor $eventAccessor */
-//        $eventAccessor = EventAccessor::getInstance();
-//        $aggregateAccessor->setVersionSequence($this, $event->getSequence());
     }
 }

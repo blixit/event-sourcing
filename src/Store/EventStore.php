@@ -21,7 +21,6 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
-use function get_class;
 use function sprintf;
 
 class EventStore implements EventStoreInterface
@@ -92,9 +91,9 @@ class EventStore implements EventStoreInterface
                 $beforeRead($aggregate, $event);
             }
         );
+
         // replay events
-        $eventsFound = 0;
-        foreach ($stream->getIterator() as $i => $event) {
+        foreach ($stream->getIterator() as $event) {
             /** @var EventInterface $event */
             // ignores not relevant events
             if ($event->getAggregateId() !== $aggregateId) {
@@ -102,18 +101,17 @@ class EventStore implements EventStoreInterface
             }
 
             // ignore event with bad type
-            if ($this->aggregateClass !== get_class($event)) {
+            if ($this->aggregateClass !== $event->getAggregateClass()) {
                 continue;
             }
 
-            $eventsFound++;
-
             /** @var AggregateRoot $aggregate */
-            $aggregate->applyEvent($event);
+            $aggregate->apply($event);
+            $this->aggregateAccessor->setVersionSequence($aggregate, $event->getSequence());
             $this->afterRead($aggregate, $event);
         }
 
-        return $eventsFound > 0 ? $aggregate : null;
+        return $aggregate->getSequence() > 0 ? $aggregate : null;
     }
 
     /**
@@ -124,7 +122,7 @@ class EventStore implements EventStoreInterface
     protected function getEmptyAggregate($aggregateId) : AggregateRootInterface
     {
         /** @var AggregateRootInterface $aggregate */
-        $aggregate = (new ReflectionClass($this->aggregateClass))->newInstance();
+        $aggregate = (new ReflectionClass($this->aggregateClass))->newInstanceWithoutConstructor();
         $this->aggregateAccessor->setAggregateId($aggregate, $aggregateId);
         return $aggregate;
     }

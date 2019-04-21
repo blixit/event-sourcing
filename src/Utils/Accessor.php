@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Utils;
 
-use Closure;
-
 abstract class Accessor
 {
     private function __construct()
@@ -27,9 +25,9 @@ abstract class Accessor
      */
     protected function readProperty($object, string $property)
     {
-        return Closure::bind(static function ($object) use ($property) {
-            return $object->$property;
-        }, null, $object)($object);
+        return (function ($property) {
+            return $this->$property;
+        })->bindTo($object)->call($object, $property);
     }
 
     /**
@@ -38,8 +36,8 @@ abstract class Accessor
      */
     protected function writeProperty(&$object, string $property, $value) : void
     {
-        Closure::bind(static function (&$object) use ($property, $value) : void {
-            $object->$property = $value;
-        }, null, $object)($object);
+        (function ($property, $value) : void {
+            $this->$property = $value;
+        })->bindTo($object)->call($object, $property, $value);
     }
 }

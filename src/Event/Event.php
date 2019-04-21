@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Event;
 
-use Blixit\EventSourcing\Event\DataStructure\Payload;
 use function time;
 
 /**
@@ -14,9 +13,6 @@ use function time;
  */
 class Event implements EventInterface
 {
-    /** @var mixed $id */
-    protected $id;
-
     /** @var mixed[] $payload */
     protected $payload = [];
 

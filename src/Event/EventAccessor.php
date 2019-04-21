@@ -11,14 +11,6 @@ class EventAccessor extends Accessor
     /** @var EventAccessor $instance */
     protected static $instance;
 
-    /**
-     * @param mixed $value
-     */
-    public function setId(EventInterface &$event, $value) : void
-    {
-        $this->writeProperty($event, 'id', $value);
-    }
-
     public function setSequence(EventInterface &$event, int $value) : void
     {
         $this->writeProperty($event, 'sequence', $value);

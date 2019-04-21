@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\EventStore;
+namespace Blixit\EventSourcing\Tests\Store;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Store\EventStore;
+use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
+use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
 use Blixit\EventSourcing\Stream\Strategy\SingleAggregateStreamStrategy;
@@ -42,8 +44,7 @@ class EventStoreTest extends TestCase
             OneStreamPerAggregateStrategy::class
         );
 
-        $aggregate = new FakeAggregateRoot();
-        $aggregateAccessor->setAggregateId($aggregate, '123');
+        $aggregate = new FakeAggregateRoot('123');
 
         // check stream strategy name
         $streamName = $eventStore->getStreamNameForAggregateId($aggregate->getAggregateId());
@@ -67,6 +68,8 @@ class EventStoreTest extends TestCase
     /**
      * @throws EventPersisterException;
      * @throws ReflectionException
+     * @throws CorruptedReadEvent
+     * @throws NonWritableEvent
      */
     public function testEventStoreRead() : void
     {
@@ -75,6 +78,8 @@ class EventStoreTest extends TestCase
 
         $event = $committed = FakeEvent::occur('123', []);
         $evAccessor->setSequence($committed, 1);
+        $evAccessor->setAggregateClass($committed, FakeAggregateRoot::class);
+        $evAccessor->setStreamName($committed, StreamStrategy::DEFAULT_NAME);
 
         $eventPersister = $this->createMock(FakeEventPersister::class);
         $eventPersister->expects($this->once())
@@ -93,7 +98,7 @@ class EventStoreTest extends TestCase
         $aggregate  = $eventStore->get('123');
         $this->assertNotEmpty($aggregate);
         // check that aggregateId is rebuilt
-        $this->assertSame($event->getAggregateId(), '123');
+        $this->assertSame($aggregate->getAggregateId(), '123');
 
         // check sequence
         $initialSequence = $aggregate->getSequence();
@@ -111,7 +116,7 @@ class EventStoreTest extends TestCase
 //    public function testEventStoreWrite() : void
 //    {
 //        $event     = FakeEvent::occur('123', []);
-//        $aggregate = new FakeAggregateRoot();
+//        $aggregate = new FakeAggregateRoot('123');
 //
 //        /** @var FakeEventPersister $eventPersister */
 //        $eventPersister = $this->createMock(FakeEventPersister::class)

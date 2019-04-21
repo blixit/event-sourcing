@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Store\InMemory;
 
-use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 use function array_filter;
-use function uniqid;
 
 class InMemoryEventPersister implements EventPersisterInterface
 {
@@ -37,7 +35,7 @@ class InMemoryEventPersister implements EventPersisterInterface
             $streamName,
             $fromSequence
         ) {
-            return $event->getStreamName() === (string) $streamName && $event->getSequence() >= $fromSequence;
+            return $event->getStreamName() === (string) $streamName && $event->getSequence() > $fromSequence;
         });
     }
 
@@ -51,9 +49,6 @@ class InMemoryEventPersister implements EventPersisterInterface
 
     public function persist(EventInterface $event) : EventInterface
     {
-        /** @var EventAccessor $accessor */
-        $accessor = EventAccessor::getInstance();
-        $accessor->setId($event, uniqid($event->getAggregateId()));
         $this->events[] = $event;
 
         return $event;

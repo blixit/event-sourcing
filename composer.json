@@ -2,6 +2,7 @@
     "name": "blixit/event-sourcing",
     "description": "",
     "type": "library",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Blixit",
@@ -10,10 +11,14 @@
     ],
     "minimum-stability": "stable",
     "require": {
+        "ext-json": "*",
+        "symfony/messenger": "^4.2"
+    },
+    "require-dev": {
         "slevomat/coding-standard": "^5.0",
         "doctrine/coding-standard": "^6.0",
         "phpunit/phpunit": "^8.1",
-        "symfony/messenger": "^4.2"
+        "phpmd/phpmd" : "@stable"
     },
     "autoload": {
         "psr-4": {

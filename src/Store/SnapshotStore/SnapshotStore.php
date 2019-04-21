@@ -9,7 +9,10 @@ use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Store\EventStore;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
+use ReflectionException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use function serialize;
+use function unserialize;
 
 class SnapshotStore extends EventStore
 {
@@ -33,19 +36,20 @@ class SnapshotStore extends EventStore
         parent::__construct($aggregateClass, $eventPersister, $streamStrategyClass, $messageBus);
         $this->snapshotPersister = $snapshotPersister;
 
-        if (! empty($configuration)) {
-            return;
-        }
-        $this->configuration = new SnapshotConfiguration(self::STEP);
+        $this->configuration = empty($configuration)
+            ? new SnapshotConfiguration(self::STEP)
+            : $configuration;
     }
 
     /**
      * @throws EventPersisterException
+     * @throws ReflectionException
      */
     protected function writeLoopIteration(AggregateRootInterface &$aggregateRoot, EventInterface &$event) : void
     {
         parent::writeLoopIteration($aggregateRoot, $event);
-        if ($event->getSequence() < $aggregateRoot->getSequence() + $this->configuration->getSteps()) {
+        $snapshotAggregate = $this->buildAggregatelocally($aggregateRoot->getAggregateId());
+        if ($event->getSequence() < $snapshotAggregate->getSequence() + $this->configuration->getSteps()) {
             return;
         }
         $this->snapshotPersister->snapshot($this->toSnapshot($aggregateRoot));
@@ -53,23 +57,36 @@ class SnapshotStore extends EventStore
 
     /**
      * @param mixed $aggregateId
+     *
+     * @throws ReflectionException
+     */
+    protected function buildAggregatelocally($aggregateId) : AggregateRootInterface
+    {
+        $streamName = (string) $this->getStreamNameForAggregateId($aggregateId);
+        $snapshot   = $this->snapshotPersister->get($streamName);
+        return $this->toAggregate($snapshot) ?? $this->getEmptyAggregate($aggregateId);
+    }
+
+    /**
+     * @param mixed $aggregateId
+     *
+     * @throws ReflectionException
      */
     protected function buildAggregate($aggregateId) : AggregateRootInterface
     {
-        $snapshot = $this->snapshotPersister->get($aggregateId);
-        return $this->fromSnapshot($snapshot);
+        return $this->buildAggregatelocally($aggregateId);
     }
 
     protected function toSnapshot(AggregateRootInterface $aggregateRoot) : SnapshotInterface
     {
-        $snapshot = new Snapshot();
-        return $snapshot;
+        $streamName = (string) $this->getStreamNameForAggregateId($aggregateRoot->getAggregateId());
+        return new Snapshot($streamName, serialize($aggregateRoot));
     }
 
-    protected function fromSnapshot(?SnapshotInterface $snapshot = null) : AggregateRootInterface
+    protected function toAggregate(?SnapshotInterface $snapshot = null) : ?AggregateRootInterface
     {
-        if (! empty($snapshot)) {
-            return $snapshot;
-        }
+        return empty($snapshot)
+            ? null
+            : unserialize($snapshot->getPayload());
     }
 }
