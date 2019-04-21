@@ -1,4 +1,4 @@
 /vendor
 .phpunit*
 /.idea
-/reports
+/reports/phpmd.html
