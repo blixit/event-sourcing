@@ -95,15 +95,6 @@ class EventStore implements EventStoreInterface
         // replay events
         foreach ($stream->getIterator() as $event) {
             /** @var EventInterface $event */
-            // ignores not relevant events
-            if ($event->getAggregateId() !== $aggregateId) {
-                continue;
-            }
-
-            // ignore event with bad type
-            if ($this->aggregateClass !== $event->getAggregateClass()) {
-                continue;
-            }
 
             /** @var AggregateRoot $aggregate */
             $aggregate->apply($event);
@@ -228,8 +219,28 @@ class EventStore implements EventStoreInterface
     {
     }
 
+    /**
+     * @throws CorruptedReadEvent
+     */
     protected function beforeRead(AggregateRootInterface $aggregateRoot, EventInterface $event) : void
     {
+        // ignores not relevant events
+        if ($event->getAggregateId() !== $aggregateRoot->getAggregateId()) {
+            throw new CorruptedReadEvent(sprintf(
+                'Event aggregate Id not expected. Expected: %s . Found: %s',
+                $aggregateRoot->getAggregateId(),
+                $event->getAggregateId()
+            ));
+        }
+
+        // ignore event with bad type
+        if ($this->aggregateClass !== $event->getAggregateClass()) {
+            throw new CorruptedReadEvent(sprintf(
+                'Event aggregate Class not expected. Expected: %s . Found: %s',
+                $this->aggregateClass,
+                $event->getAggregateClass()
+            ));
+        }
     }
 
     protected function afterRead(AggregateRootInterface $aggregateRoot, EventInterface $event) : void
