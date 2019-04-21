@@ -1,0 +1,13 @@
+language: php
+
+php:
+  - 7.2.11
+  - 7.3.0
+
+before_install:
+  - composer install
+
+script:
+  - ./vendor/bin/phpcs src
+  - ./vendor/bin/phpmd src html phpmd.xml > reports/phpmd.html
+  - ./vendor/bin/phpunit
