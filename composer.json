@@ -2,19 +2,20 @@
     "name": "blixit/event-sourcing",
     "description": "",
     "type": "library",
-    "version": "1.0.0",
+    "version": "0.0.1",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Blixit",
             "email": "alain.ngangoue@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
     "require": {
         "ext-json": "*",
         "symfony/messenger": "^4.2"
     },
     "require-dev": {
+        "php": "^7.2",
         "slevomat/coding-standard": "^5.0",
         "doctrine/coding-standard": "^6.0",
         "phpunit/phpunit": "^8.1",
