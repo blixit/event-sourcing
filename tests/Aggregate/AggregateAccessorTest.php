@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Aggregate;
+namespace Blixit\EventSourcingTests\Aggregate;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use PHPUnit\Framework\TestCase;

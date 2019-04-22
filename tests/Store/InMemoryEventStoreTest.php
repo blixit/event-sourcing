@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Store\InMemory;
+namespace Blixit\EventSourcingTests\Store\InMemory;
 
 use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
 use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
@@ -10,8 +10,8 @@ use Blixit\EventSourcing\Store\InMemory\InMemoryEventPersister;
 use Blixit\EventSourcing\Store\InMemory\InMemoryEventStore;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
-use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Aggregate\FakeAggregateRoot;
+use Blixit\EventSourcingTests\Event\FakeEvent;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

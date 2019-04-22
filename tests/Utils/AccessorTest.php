@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Utils;
+namespace Blixit\EventSourcingTests\Utils;
 
 use PHPUnit\Framework\TestCase;
 

@@ -24,7 +24,7 @@
     "autoload": {
         "psr-4": {
             "Blixit\\EventSourcing\\": "src/",
-            "Blixit\\EventSourcing\\Tests\\": "tests/"
+            "Blixit\\EventSourcingTests\\": "tests/"
         }
     }
 }

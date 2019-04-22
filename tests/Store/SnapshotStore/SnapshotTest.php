@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Store\SnapshotStore;
+namespace Blixit\EventSourcingTests\Store\SnapshotStore;
 
 use Blixit\EventSourcing\Store\SnapshotStore\Snapshot;
 use PHPUnit\Framework\TestCase;

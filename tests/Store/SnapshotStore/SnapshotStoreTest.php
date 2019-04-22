@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Store\SnapshotStore;
+namespace Blixit\EventSourcingTests\Store\SnapshotStore;
 
 use Blixit\EventSourcing\Store\InMemory\InMemoryEventPersister;
 use Blixit\EventSourcing\Store\InMemory\InMemorySnapshotPersister;
 use Blixit\EventSourcing\Store\SnapshotStore\SnapshotConfiguration;
 use Blixit\EventSourcing\Store\SnapshotStore\SnapshotStore;
 use Blixit\EventSourcing\Stream\Strategy\UniqueStreamStrategy;
-use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
-use Blixit\EventSourcing\Tests\Utils\FakeAccessor;
+use Blixit\EventSourcingTests\Aggregate\FakeAggregateRoot;
+use Blixit\EventSourcingTests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Utils\FakeAccessor;
 use Exception;
 use PHPUnit\Framework\TestCase;
 

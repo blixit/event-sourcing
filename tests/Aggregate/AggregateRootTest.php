@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Aggregate;
+namespace Blixit\EventSourcingTests\Aggregate;
 
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Event\FakeEvent;
 use PHPUnit\Framework\TestCase;
 
 class AggregateRootTest extends TestCase

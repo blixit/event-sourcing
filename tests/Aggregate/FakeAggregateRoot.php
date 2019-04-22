@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Aggregate;
+namespace Blixit\EventSourcingTests\Aggregate;
 
 use Blixit\EventSourcing\Aggregate\AggregateRoot;
 use Blixit\EventSourcing\Event\EventInterface;
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Event\FakeEvent;
 
 class FakeAggregateRoot extends AggregateRoot
 {

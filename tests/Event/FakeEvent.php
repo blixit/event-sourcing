@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Event;
+namespace Blixit\EventSourcingTests\Event;
 
 use Blixit\EventSourcing\Event\Event;
 

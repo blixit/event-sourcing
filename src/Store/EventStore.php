@@ -16,6 +16,7 @@ use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\ReadableStream;
 use Blixit\EventSourcing\Stream\StorableStream;
 use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
+use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use ReflectionClass;
 use ReflectionException;
@@ -64,6 +65,7 @@ class EventStore implements EventStoreInterface
      */
     public function getStreamNameForAggregateId($aggregateId = null) : StreamName
     {
+        // TODO: add hook after stream computeName
         return $this->streamStrategy->computeName($this->aggregateClass, $aggregateId);
     }
 
@@ -245,5 +247,10 @@ class EventStore implements EventStoreInterface
 
     protected function afterRead(AggregateRootInterface $aggregateRoot, EventInterface $event) : void
     {
+    }
+
+    public function load() : Stream
+    {
+        return null;
     }
 }

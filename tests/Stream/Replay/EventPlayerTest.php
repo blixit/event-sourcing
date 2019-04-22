@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Stream\Replay;
+namespace Blixit\EventSourcingTests\Stream\Replay;
 
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
 use Blixit\EventSourcing\Event\Event;
@@ -10,8 +10,8 @@ use Blixit\EventSourcing\Stream\Replay\EventPlayer;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use Blixit\EventSourcing\Stream\StreamNotOrderedFailure;
-use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Aggregate\FakeAggregateRoot;
+use Blixit\EventSourcingTests\Event\FakeEvent;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use function microtime;

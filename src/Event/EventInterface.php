@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Event;
 
-interface EventInterface //phpcs:ignore
+use Blixit\EventSourcing\Messaging\MessageInterface;
+
+interface EventInterface extends MessageInterface //phpcs:ignore
 {
     /**
      * @param mixed[] $payload

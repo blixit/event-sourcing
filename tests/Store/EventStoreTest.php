@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Store;
+namespace Blixit\EventSourcingTests\Store;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use Blixit\EventSourcing\Event\EventAccessor;
@@ -14,8 +14,8 @@ use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
 use Blixit\EventSourcing\Stream\Strategy\SingleAggregateStreamStrategy;
 use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
 use Blixit\EventSourcing\Stream\Strategy\UniqueStreamStrategy;
-use Blixit\EventSourcing\Tests\Aggregate\FakeAggregateRoot;
-use Blixit\EventSourcing\Tests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Aggregate\FakeAggregateRoot;
+use Blixit\EventSourcingTests\Event\FakeEvent;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

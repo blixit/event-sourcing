@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Blixit\EventSourcing\Tests\Stream;
+namespace Blixit\EventSourcingTests\Stream;
 
 use Blixit\EventSourcing\Event\Event;
 use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use Blixit\EventSourcing\Stream\StreamNotOrderedFailure;
 use PHPUnit\Framework\TestCase;
-use function sleep;
 
 class StreamTest extends TestCase
 {
