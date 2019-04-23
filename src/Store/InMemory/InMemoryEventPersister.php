@@ -40,22 +40,16 @@ class InMemoryEventPersister implements EventPersisterInterface
      */
     public function find(EventMatcherInterface $eventMatcher) : array
     {
-        $aggregateId    = $eventMatcher->getAggregateId();
-        $aggregateClass = $eventMatcher->getAggregateClass();
-        $fromSequence   = $eventMatcher->getSequence();
-        $streamName     = $eventMatcher->getStreamName();
-        $timestamp      = $eventMatcher->getTimestamp();
+        return array_filter($this->events, static function (EventInterface $event) use ($eventMatcher) {
+            $aggregateId    = $eventMatcher->getAggregateId();
+            $aggregateClass = $eventMatcher->getAggregateClass();
+            $fromSequence   = $eventMatcher->getSequence();
+            $streamName     = $eventMatcher->getStreamName();
+            $timestamp      = $eventMatcher->getTimestamp();
 
-        return array_filter($this->events, static function (EventInterface $event) use (
-            $aggregateId,
-            $aggregateClass,
-            $fromSequence,
-            $streamName,
-            $timestamp
-        ) {
             $condition = true;
             if (! empty($aggregateId)) {
-                $condition = $condition && ($event->getAggregateId() === (string) $aggregateId);
+                $condition = $condition && ($event->getAggregateId() === $aggregateId);
             }
             if (! empty($aggregateClass)) {
                 $condition = $condition && ($event->getAggregateClass() === (string) $aggregateClass);
@@ -67,7 +61,7 @@ class InMemoryEventPersister implements EventPersisterInterface
                 $condition = $condition && ($event->getStreamName() === (string) $streamName);
             }
             if (! empty($timestamp)) {
-                $condition = $condition && ($event->getStreamName() > $timestamp);
+                $condition = $condition && ($event->getTimestamp() > $timestamp);
             }
             return $condition;
         });

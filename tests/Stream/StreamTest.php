@@ -29,11 +29,11 @@ class StreamTest extends TestCase
         $this->assertCount(0, $stream);
     }
 
-    /**
-     * @throws StreamNotOrderedFailure
-     */
-    public function testStreamNotOrderedFailure() : void
-    {
+//    /**
+//     * @throws StreamNotOrderedFailure
+//     */
+//    public function testStreamNotOrderedFailure() : void
+//    {
         // à tester dans le builder TODO:
 //        $stream = new Stream(new StreamName($expectedStreamName = 'mystream'));
 //
@@ -44,5 +44,5 @@ class StreamTest extends TestCase
 //        // let insert event2 before event1
 //        $stream->enqueue($event2);
 //        $stream->enqueue($event1);
-    }
+//    }
 }

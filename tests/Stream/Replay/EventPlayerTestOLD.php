@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use function microtime;
 
-class EventPlayerTest extends TestCase
+class EventPlayerTestOLD extends TestCase
 {
     /**
      * @throws StreamNotOrderedFailure

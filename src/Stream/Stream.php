@@ -8,6 +8,7 @@ use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
 use Countable;
 use SplQueue;
+use function call_user_func;
 
 class Stream implements Countable
 {
@@ -19,6 +20,9 @@ class Stream implements Countable
 
     /** @var int $lastEnqueuedSequenceNumber */
     private $lastEnqueuedSequenceNumber;
+
+    /** @var callable $beforeEnqueue */
+    private $beforeEnqueue;
 
     /**
      * Event accessor doesnt require to create many instances if
@@ -41,19 +45,17 @@ class Stream implements Countable
             self::$eventAccessor = EventAccessor::getInstance();
         }
 
-        $this->queue = new SplQueue();
-
         if (empty($beforeEnqueue)) {
             $beforeEnqueue = static function (EventInterface $event) : void {}; // phpcs:ignore
         }
 
+        $this->queue         = new SplQueue();
+        $this->streamName    = $streamName;
+        $this->beforeEnqueue = $beforeEnqueue;
+
         foreach ($events as $event) {
-            $beforeEnqueue($event);
-            self::$eventAccessor->setStreamName($event, (string) $streamName);
             $this->enqueue($event);
         }
-
-        $this->streamName = $streamName;
     }
 
     public function getStreamName() : ?StreamName
@@ -76,6 +78,9 @@ class Stream implements Countable
      */
     public function enqueue(EventInterface $event) : void
     {
+        call_user_func($this->beforeEnqueue, $event);
+        self::$eventAccessor->setStreamName($event, (string) $this->streamName);
+
         if (! isset($this->lastEnqueuedSequenceNumber)) {
             $this->lastEnqueuedSequenceNumber = $event->getSequence();
         }
