@@ -97,8 +97,6 @@ class EventStore implements EventStoreInterface
         // replay events
         foreach ($stream->getIterator() as $event) {
             /** @var EventInterface $event */
-
-            /** @var AggregateRoot $aggregate */
             $aggregate->apply($event);
             $this->aggregateAccessor->setVersionSequence($aggregate, $event->getSequence());
             $this->afterRead($aggregate, $event);
