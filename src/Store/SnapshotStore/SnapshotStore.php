@@ -6,11 +6,11 @@ namespace Blixit\EventSourcing\Store\SnapshotStore;
 
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
 use Blixit\EventSourcing\Event\EventInterface;
+use Blixit\EventSourcing\Messaging\DispatcherInterface;
 use Blixit\EventSourcing\Store\EventStore;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use ReflectionException;
-use Symfony\Component\Messenger\MessageBusInterface;
 use function serialize;
 use function unserialize;
 
@@ -31,7 +31,7 @@ class SnapshotStore extends EventStore
         string $streamStrategyClass,
         SnapshotPersisterInterface $snapshotPersister,
         ?SnapshotConfiguration $configuration,
-        ?MessageBusInterface $messageBus
+        ?DispatcherInterface $messageBus
     ) {
         parent::__construct($aggregateClass, $eventPersister, $streamStrategyClass, $messageBus);
         $this->snapshotPersister = $snapshotPersister;
