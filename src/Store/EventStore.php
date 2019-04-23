@@ -9,6 +9,7 @@ use Blixit\EventSourcing\Aggregate\AggregateRoot;
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
 use Blixit\EventSourcing\Event\EventAccessor;
 use Blixit\EventSourcing\Event\EventInterface;
+use Blixit\EventSourcing\Messaging\DispatcherInterface;
 use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
 use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
@@ -20,7 +21,6 @@ use Blixit\EventSourcing\Stream\Stream;
 use Blixit\EventSourcing\Stream\StreamName;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 use function sprintf;
 
@@ -35,7 +35,7 @@ class EventStore implements EventStoreInterface
     /** @var StreamStrategy $streamStrategy */
     private $streamStrategy;
 
-    /** @var MessageBusInterface $messageBus */
+    /** @var DispatcherInterface $messageBus */
     private $messageBus;
 
     /** @var AggregateAccessor $aggregateAccessor */
@@ -48,7 +48,7 @@ class EventStore implements EventStoreInterface
         string $aggregateClass,
         EventPersisterInterface $eventPersister,
         string $streamStrategyClass,
-        ?MessageBusInterface $messageBus = null
+        ?DispatcherInterface $messageBus = null
     ) {
         $this->eventPersister = $eventPersister;
         $this->aggregateClass = $aggregateClass;

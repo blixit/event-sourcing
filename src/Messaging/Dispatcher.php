@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Blixit\EventSourcing\Messaging;
 
-class Dispatcher
+class Dispatcher implements DispatcherInterface
 {
     /** @var MessagingMiddlewareInterface[] $middlewares */
     protected $middlewares;

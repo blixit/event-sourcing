@@ -6,16 +6,26 @@ namespace Blixit\EventSourcingTests\Store;
 
 use Blixit\EventSourcing\Aggregate\AggregateAccessor;
 use Blixit\EventSourcing\Event\EventAccessor;
+use Blixit\EventSourcing\Messaging\CommandHandlerMiddleware;
+use Blixit\EventSourcing\Messaging\Dispatcher;
+use Blixit\EventSourcing\Messaging\EventHandlerMiddleware;
+use Blixit\EventSourcing\Messaging\LoggingMiddleware;
+use Blixit\EventSourcing\Messaging\MessageBrokerMiddleWare;
+use Blixit\EventSourcing\Messaging\MessageInterface;
 use Blixit\EventSourcing\Store\EventStore;
 use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
 use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
+use Blixit\EventSourcing\Store\InMemory\InMemoryEventPersister;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
 use Blixit\EventSourcing\Stream\Strategy\SingleAggregateStreamStrategy;
 use Blixit\EventSourcing\Stream\Strategy\StreamStrategy;
 use Blixit\EventSourcing\Stream\Strategy\UniqueStreamStrategy;
 use Blixit\EventSourcingTests\Aggregate\FakeAggregateRoot;
+use Blixit\EventSourcingTests\Command\FakeCommand;
 use Blixit\EventSourcingTests\Event\FakeEvent;
+use Blixit\EventSourcingTests\Messaging\FakeHandlers;
+use Blixit\EventSourcingTests\Messaging\FakeMessage1;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -109,30 +119,77 @@ class EventStoreTest extends TestCase
         $this->assertSame($initialSequence + 1, $aggregate->getSequence());
     }
 
-//    /**
-//     * @throws EventPersisterException;
-//     * @throws ReflectionException
-//     */
-//    public function testEventStoreWrite() : void
-//    {
-//        $event     = FakeEvent::occur('123', []);
-//        $aggregate = new FakeAggregateRoot('123');
-//
-//        /** @var FakeEventPersister $eventPersister */
-//        $eventPersister = $this->createMock(FakeEventPersister::class)
-//            ->method('get')
-//            ->willReturn([$event]);
-//        $eventPersister->method('store')
-//            ->willReturnReference($aggregate);
-//
-//        $eventStore = new Store(FakeAggregateRoot::class, $eventPersister);
-//        $aggregate  = $eventStore->get('123');
-//        $this->assertNotEmpty($aggregate);
-//
-//        $aggregate->record(FakeEvent::occur('123', []));
-//        $eventStore->store($aggregate);
-//
-//        $this->assertEmpty($aggregate->getRecordedEvents());
-//        $this->assertCount(1, $aggregate->getCommittedEvents());
-//    }
+    /**
+     * @throws EventPersisterException;
+     * @throws ReflectionException
+     */
+    public function testEventStoreDispatchingEvents() : void
+    {
+        /** @var Dispatcher $dispatcher */
+        $dispatcher = $this->createMock(Dispatcher::class);
+        $dispatcher->expects($this->once())
+            ->method('dispatch');
+        /** @var FakeEventPersister $eventPersister */
+        $eventStore = new EventStore(
+            FakeAggregateRoot::class,
+            new InMemoryEventPersister(),
+            UniqueStreamStrategy::class,
+            $dispatcher
+        );
+
+        $aggregate = new FakeAggregateRoot('123');
+
+        $aggregate->record(FakeEvent::occur('123', []));
+        $eventStore->store($aggregate);
+
+        $this->assertEmpty($aggregate->getRecordedEvents());
+    }
+
+    /**
+     * @throws EventPersisterException;
+     * @throws ReflectionException
+     */
+    public function testHandlingOfEvents() : void
+    {
+        $dispatcher = new Dispatcher([
+            MessageBrokerMiddleWare::class => new MessageBrokerMiddleWare([
+                MessageInterface::class => [
+                    'rmq' => [FakeHandlers::class, 'asyncer'],
+                ],
+            ]),
+            LoggingMiddleware::class => new LoggingMiddleware([
+                MessageInterface::class => [
+                    'log' => [FakeHandlers::class, 'logger'],
+                ],
+            ]),
+            EventHandlerMiddleware::class => new EventHandlerMiddleware([
+                FakeEvent::class => [
+                    'eHandler' => [FakeHandlers::class, 'eHandler'],
+                    'mailer' => [FakeHandlers::class, 'eHandler'],
+                ],
+            ]),
+            CommandHandlerMiddleware::class => new CommandHandlerMiddleware([
+                FakeMessage1::class => [
+                    'cHandler' => [FakeHandlers::class, 'cHandler'],
+                ],
+                FakeCommand::class => [FakeHandlers::class, 'cHandler'],
+            ]),
+        ]);
+
+        /** @var FakeEventPersister $eventPersister */
+        $eventStore = new EventStore(
+            FakeAggregateRoot::class,
+            new InMemoryEventPersister(),
+            UniqueStreamStrategy::class,
+            $dispatcher
+        );
+
+        $aggregate = new FakeAggregateRoot('123');
+
+        $aggregate->record(FakeEvent::occur('123', []));
+        $eventStore->store($aggregate);
+
+        $this->assertEmpty($aggregate->getRecordedEvents());
+        $this->assertSame(2, FakeHandlers::$EHANDLER);
+    }
 }
