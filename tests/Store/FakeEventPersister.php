@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Blixit\EventSourcingTests\Store;
 
 use Blixit\EventSourcing\Event\EventInterface;
+use Blixit\EventSourcing\Store\Matcher\EventMatcherInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 
@@ -37,6 +38,14 @@ class FakeEventPersister implements EventPersisterInterface
      * @return EventInterface[]
      */
     public function getByEvent(string $eventClassname) : array
+    {
+        return [];
+    }
+
+    /**
+     * @return EventInterface[]
+     */
+    public function find(EventMatcherInterface $eventMatcher) : array
     {
         return [];
     }

@@ -16,6 +16,8 @@ use Blixit\EventSourcing\Store\EventStore;
 use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
 use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
 use Blixit\EventSourcing\Store\InMemory\InMemoryEventPersister;
+use Blixit\EventSourcing\Store\Matcher\EventMatcher;
+use Blixit\EventSourcing\Store\Matcher\FilterObject;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Stream\Strategy\OneStreamPerAggregateStrategy;
 use Blixit\EventSourcing\Stream\Strategy\SingleAggregateStreamStrategy;
@@ -192,5 +194,46 @@ class EventStoreTest extends TestCase
 
         $this->assertEmpty($aggregate->getRecordedEvents());
         $this->assertSame(2, FakeHandlers::$EHANDLER);
+    }
+
+    public function testLoadEvents() : void
+    {
+        /** @var FakeEventPersister $eventPersister */
+        $eventStore = new EventStore(
+            FakeAggregateRoot::class,
+            new InMemoryEventPersister(),
+            UniqueStreamStrategy::class
+        );
+
+        $aggregate    = new FakeAggregateRoot('123');
+        $aggregate456 = new FakeAggregateRoot('456');
+        $aggregate789 = new FakeAggregateRoot('789');
+
+        $aggregate->record(FakeEvent::occur('123', []));
+        $aggregate->record(FakeEvent::occur('123', []));
+        $eventStore->store($aggregate);
+        $aggregate456->record(FakeEvent::occur('456', []));
+        $aggregate456->record(FakeEvent::occur('456', []));
+        $aggregate456->record(FakeEvent::occur('456', []));
+        $eventStore->store($aggregate456);
+        $aggregate789->record(FakeEvent::occur('789', []));
+        $eventStore->store($aggregate789);
+
+        // load events of the 1st aggregate
+        $streamName = $eventStore->getStreamNameForAggregateId('123');
+        $events     = $eventStore->load(new EventMatcher([
+            new FilterObject('streamName', (string) $streamName),
+            new FilterObject('aggregateId', '123'),
+            new FilterObject('sequence', 1),
+        ]));
+        $this->assertCount(1, $events);
+
+        // load events of the 456 aggregate
+        $streamName = $eventStore->getStreamNameForAggregateId('456');
+        $events     = $eventStore->load(new EventMatcher([
+            new FilterObject('streamName', (string) $streamName),
+            new FilterObject('aggregateId', '456'),
+        ]));
+        $this->assertCount(3, $events);
     }
 }

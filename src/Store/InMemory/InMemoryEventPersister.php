@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Blixit\EventSourcing\Store\InMemory;
 
 use Blixit\EventSourcing\Event\EventInterface;
+use Blixit\EventSourcing\Store\Matcher\EventMatcherInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 use function array_filter;
@@ -32,5 +33,43 @@ class InMemoryEventPersister implements EventPersisterInterface
         $this->events[] = $event;
 
         return $event;
+    }
+
+    /**
+     * @return EventInterface[]
+     */
+    public function find(EventMatcherInterface $eventMatcher) : array
+    {
+        $aggregateId    = $eventMatcher->getAggregateId();
+        $aggregateClass = $eventMatcher->getAggregateClass();
+        $fromSequence   = $eventMatcher->getSequence();
+        $streamName     = $eventMatcher->getStreamName();
+        $timestamp      = $eventMatcher->getTimestamp();
+
+        return array_filter($this->events, static function (EventInterface $event) use (
+            $aggregateId,
+            $aggregateClass,
+            $fromSequence,
+            $streamName,
+            $timestamp
+        ) {
+            $condition = true;
+            if (! empty($aggregateId)) {
+                $condition = $condition && ($event->getAggregateId() === (string) $aggregateId);
+            }
+            if (! empty($aggregateClass)) {
+                $condition = $condition && ($event->getAggregateClass() === (string) $aggregateClass);
+            }
+            if (! empty($fromSequence)) {
+                $condition = $condition && ($event->getSequence() > $fromSequence);
+            }
+            if (! empty($streamName)) {
+                $condition = $condition && ($event->getStreamName() === (string) $streamName);
+            }
+            if (! empty($timestamp)) {
+                $condition = $condition && ($event->getStreamName() > $timestamp);
+            }
+            return $condition;
+        });
     }
 }

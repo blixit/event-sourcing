@@ -51,6 +51,13 @@ class MatcherTest extends TestCase
         $eventMatcher = new EventMatcher([
             new FilterObject('streamName', 'user-1'),
         ]);
+
+        $this->assertSame('user-1', $eventMatcher->getStreamName());
+        $this->assertSame(null, $eventMatcher->getSequence());
+        $this->assertSame(null, $eventMatcher->getAggregateId());
+        $this->assertSame(null, $eventMatcher->getAggregateClass());
+        $this->assertSame(null, $eventMatcher->getTimestamp());
+
         $this->expectException(MatcherException::class);
         $eventMatcher->addSearchField(new FilterObject('notAllowed', 25));
     }

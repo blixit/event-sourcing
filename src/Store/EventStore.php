@@ -12,6 +12,9 @@ use Blixit\EventSourcing\Event\EventInterface;
 use Blixit\EventSourcing\Messaging\DispatcherInterface;
 use Blixit\EventSourcing\Store\Exception\CorruptedReadEvent;
 use Blixit\EventSourcing\Store\Exception\NonWritableEvent;
+use Blixit\EventSourcing\Store\Matcher\EventMatcher;
+use Blixit\EventSourcing\Store\Matcher\EventMatcherInterface;
+use Blixit\EventSourcing\Store\Matcher\MatcherInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterException;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\ReadableStream;
@@ -247,8 +250,13 @@ class EventStore implements EventStoreInterface
     {
     }
 
-    public function load() : Stream
+    public function load(EventMatcherInterface $matcher) : Stream
     {
-        return null;
+        // compute streamName based on stream strategy
+        $streamName = $this->getStreamNameForAggregateId($matcher->getAggregateId());
+        // get events from store
+        $events = $this->eventPersister->find($matcher);
+        // build stream
+        return new ReadableStream($streamName, $events);
     }
 }

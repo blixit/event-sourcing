@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Blixit\EventSourcing\Store;
 
 use Blixit\EventSourcing\Aggregate\AggregateRootInterface;
+use Blixit\EventSourcing\Store\Matcher\EventMatcherInterface;
 use Blixit\EventSourcing\Stream\Stream;
 
 interface EventStoreInterface //phpcs:ignore
@@ -16,5 +17,5 @@ interface EventStoreInterface //phpcs:ignore
 
     public function store(AggregateRootInterface &$aggregateRoot) : void;
 
-    public function load(/*MetadataMatcher*/) : Stream;
+    public function load(EventMatcherInterface $matcher) : Stream;
 }
