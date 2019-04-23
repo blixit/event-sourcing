@@ -187,6 +187,7 @@ class EventStoreTest extends TestCase
         $aggregate = new FakeAggregateRoot('123');
 
         $aggregate->record(FakeEvent::occur('123', []));
+        FakeHandlers::$EHANDLER = 0;
         $eventStore->store($aggregate);
 
         $this->assertEmpty($aggregate->getRecordedEvents());
