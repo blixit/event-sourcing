@@ -17,6 +17,13 @@ event sourcing pattern.
 composer require blixit/event-sourcing
 ```
 
+### Documentation
+
+* [Basic Usage](./wiki/basic-usage.md)
+* [Event Store](./wiki/event-store.md)
+* [Snapshot Store](./wiki/snapshot-store.md)
+* [Dispatcher and Middlewares](./wiki/dispatcher-middlewares.md)
+
 ### Why this library ?
 
 **The Problem**

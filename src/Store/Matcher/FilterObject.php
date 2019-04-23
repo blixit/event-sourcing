@@ -9,7 +9,7 @@ namespace Blixit\EventSourcing\Store\Matcher;
  *
  * @link     http://github.com/blixit
  */
-class Filter
+class FilterObject
 {
     /** @var string $field */
     private $field;
@@ -21,12 +21,12 @@ class Filter
     private $isActive;
 
     /**
-     * @param mixed $searchedValue
+     * @param mixed $value
      */
-    public function __construct(string $field, $searchedValue, bool $isActive = true)
+    public function __construct(string $field, $value, bool $isActive = true)
     {
         $this->field    = $field;
-        $this->value    = $searchedValue;
+        $this->value    = $value;
         $this->isActive = $isActive;
     }
 
