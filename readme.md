@@ -35,9 +35,9 @@ After having been using Prooph, I came to the idea to write my own
 implementation. Here are some reasons for which I gave up Prooph:
 
 1. the documentation is really not up-to-date
-2. it forces the choice of database management system (MySQL). To use, other
+2. it forces the choice of database management system (MySQL). To use other
 database management systems you have to use some libraries they develop and
-that don't come with a super documentation. I'm thinking about adapters for
+that don't come with a super documentation. I mean adapters for
 NoSQL Database such as MongoDb.
 3. as consequence, the coupling with the infrastructure is really high
 4. events stream is not easy to understand. The flux between the moment your
