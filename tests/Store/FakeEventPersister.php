@@ -35,6 +35,14 @@ class FakeEventPersister implements EventPersisterInterface
     }
 
     /**
+     * Returns the last event stored into the stream
+     */
+    public function getLastEvent(StreamName $streamName) : ?EventInterface
+    {
+        return null;
+    }
+
+    /**
      * @return EventInterface[]
      */
     public function getByEvent(string $eventClassname) : array

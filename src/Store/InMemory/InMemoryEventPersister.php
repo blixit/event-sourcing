@@ -9,6 +9,7 @@ use Blixit\EventSourcing\Store\Matcher\EventMatcherInterface;
 use Blixit\EventSourcing\Store\Persistence\EventPersisterInterface;
 use Blixit\EventSourcing\Stream\StreamName;
 use function array_filter;
+use function end;
 
 class InMemoryEventPersister implements EventPersisterInterface
 {
@@ -26,6 +27,14 @@ class InMemoryEventPersister implements EventPersisterInterface
         ) {
             return $event->getStreamName() === (string) $streamName && $event->getSequence() > $fromSequence;
         });
+    }
+
+    /**
+     * Returns the last event stored into the stream
+     */
+    public function getLastEvent(StreamName $streamName) : ?EventInterface
+    {
+        return empty($this->events) ? null : end($this->events);
     }
 
     public function persist(EventInterface $event) : EventInterface

@@ -142,6 +142,11 @@ class EventStore implements EventStoreInterface
         // get beforeWrite callback
         $beforeWrite = [$this, 'beforeWrite'];
 
+        $lastEvent = $this->eventPersister->getLastEvent($streamName);
+        if ($lastEvent instanceof EventInterface) {
+            $this->aggregateAccessor->setVersionSequence($aggregateRoot, $lastEvent->getSequence());
+        }
+
         /** @var AggregateRoot $aggregateRoot */
         $stream = new StorableStream(
             $streamName,
