@@ -37,7 +37,7 @@ class SnapshotStore extends EventStore
         $this->snapshotPersister = $snapshotPersister;
 
         $this->configuration = empty($configuration)
-            ? new SnapshotConfiguration(self::STEP)
+            ? new SnapshotConfiguration(self::STEP, Snapshot::class)
             : $configuration;
     }
 
@@ -79,8 +79,9 @@ class SnapshotStore extends EventStore
 
     protected function toSnapshot(AggregateRootInterface $aggregateRoot) : SnapshotInterface
     {
-        $streamName = (string) $this->getStreamNameForAggregateId($aggregateRoot->getAggregateId());
-        return new Snapshot($streamName, serialize($aggregateRoot));
+        $streamName    = (string) $this->getStreamNameForAggregateId($aggregateRoot->getAggregateId());
+        $snapshotClass = $this->configuration->getSnapshotClass();
+        return new $snapshotClass($streamName, serialize($aggregateRoot));
     }
 
     protected function toAggregate(?SnapshotInterface $snapshot = null) : ?AggregateRootInterface
