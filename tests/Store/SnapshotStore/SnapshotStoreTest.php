@@ -6,6 +6,7 @@ namespace Blixit\EventSourcingTests\Store\SnapshotStore;
 
 use Blixit\EventSourcing\Store\InMemory\InMemoryEventPersister;
 use Blixit\EventSourcing\Store\InMemory\InMemorySnapshotPersister;
+use Blixit\EventSourcing\Store\SnapshotStore\Snapshot;
 use Blixit\EventSourcing\Store\SnapshotStore\SnapshotConfiguration;
 use Blixit\EventSourcing\Store\SnapshotStore\SnapshotStore;
 use Blixit\EventSourcing\Stream\Strategy\UniqueStreamStrategy;
@@ -51,7 +52,7 @@ class SnapshotStoreTest extends TestCase
             new InMemoryEventPersister(),
             UniqueStreamStrategy::class,
             new InMemorySnapshotPersister(),
-            new SnapshotConfiguration(2),
+            new SnapshotConfiguration(2, Snapshot::class),
             null
         );
 
@@ -78,7 +79,7 @@ class SnapshotStoreTest extends TestCase
             new InMemoryEventPersister(),
             UniqueStreamStrategy::class,
             new InMemorySnapshotPersister(),
-            new SnapshotConfiguration($steps),
+            new SnapshotConfiguration($steps, Snapshot::class),
             null
         );
 
